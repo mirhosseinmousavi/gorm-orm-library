@@ -73,9 +73,9 @@ func main() {
 
 	// At the end of the use of gorm as orm library, we delete the record we created before to test
 	// delete function of this library and test it with the number of deleted records with RowsAffected
-	rowsOfDeleted := db.Delete(&customerProfile, 1).RowsAffected
+	// rowsOfDeleted := db.Delete(&customerProfile, 1).RowsAffected
 
 	// and to check the number of deleted records we print rowsOfDeleted
-	fmt.Printf("rowsOfDeleted: %v\n", rowsOfDeleted)
+	// fmt.Printf("rowsOfDeleted: %v\n", rowsOfDeleted)
 
 }

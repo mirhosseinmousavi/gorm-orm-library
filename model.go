@@ -12,7 +12,6 @@ type CustomerInformation struct {
 
 // Create another structure as fields of CustomerProfile to manage the score of a user in CustomerProfile fields
 type CustomerScore struct {
-	ID     int
 	Amount int
 }
 
