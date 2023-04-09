@@ -4,9 +4,13 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
+	"os"
+	"time"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // To start this application please use first go mod tidy and then use to run.
@@ -21,9 +25,24 @@ import (
 // if you have any questions please contact me
 // Use the main function as the entry point of the application
 func main() {
-	// create database.db if not exist this file and open up this file to use as a database
-	// Use the default configuration of gorm we can skip this step right now
-	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+
+	// config gorm logger to show every query execute and check sql query in terminal
+	// then judge everything is working fine
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // handle when output is printing and which character is used at first of the character
+		logger.Config{
+			SlowThreshold:             time.Second, // threshold of maximum query allowed to execute
+			LogLevel:                  logger.Info, // using the info to show every query executed
+			IgnoreRecordNotFoundError: false,       // if getting an error when the record is not found, log it
+			ParameterizedQueries:      false,       // show params used in the query to know about detail
+			// of every parameter used
+		},
+	)
+
+	// create database.db If this file does not exist then open up this file to use as a database
+	// Use the default configuration of gorm. We can skip this step right now
+	// use custom logger as the value of Logger in gorm.Config
+	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{Logger: newLogger})
 	// If any problem exists we can stop the application with a message like failed to connect and not able to continue
 	if err != nil {
 		panic("failed to connect")
@@ -73,9 +92,9 @@ func main() {
 
 	// At the end of the use of gorm as orm library, we delete the record we created before to test
 	// delete function of this library and test it with the number of deleted records with RowsAffected
-	// rowsOfDeleted := db.Delete(&customerProfile, 1).RowsAffected
+	rowsOfDeleted := db.Delete(&customerProfile, 1).RowsAffected
 
 	// and to check the number of deleted records we print rowsOfDeleted
-	// fmt.Printf("rowsOfDeleted: %v\n", rowsOfDeleted)
+	fmt.Printf("rowsOfDeleted: %v\n", rowsOfDeleted)
 
 }
